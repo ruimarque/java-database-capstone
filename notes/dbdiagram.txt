@@ -1,0 +1,120 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+//Ref: appointments.patient_id > patients.id
+//Ref: appointments.doctor_id > doctors.id
+//Ref: appointments.clinic_id > clinics.id
+//Ref: patients.gender_id > genders.id
+//Ref: doctors.gender_id > genders.id
+
+Table admins {
+  id integer [primary key]
+  first_name varchar
+  last_name varchar
+  email varchar
+  password varchar
+  created_at timestamp
+}
+
+Table appointments {
+  id integer [primary key]
+  patient_id integer [Ref: > patients.id]
+  time_slot_id integer [Ref: > time_slots.id]
+  status_id integer [Ref: > appointment_status.id]
+  reason varchar
+  created_at timestamp
+}
+
+Table patients {
+  id integer [primary key]
+  first_name varchar
+  last_name varchar
+  gender_id integer [Ref: > genders.id]
+  date_of_birth date
+  phone_number varchar
+  email varchar
+  password varchar
+  address varchar
+  created_at timestamp
+}
+
+Table doctors {
+  id integer [primary key]
+  first_name varchar
+  last_name varchar
+  gender_id integer [Ref: > genders.id]
+  phone_number varchar
+  email varchar
+  password varchar
+  created_at timestamp
+}
+
+Table clinics {
+  id integer [primary key]
+  name varchar
+  email varchar
+  phone_number varchar
+  address varchar
+  created_at timestamp
+}
+
+Table genders {
+  id integer [primary key]
+  gender varchar
+}
+
+Table specializations {
+  id integer [primary key]
+  name varchar
+}
+
+Table doctors_specializations {
+  doctor_id integer [Ref: > doctors.id]
+  specialization_id integer [Ref: > specializations.id]
+}
+
+Table doctors_clinics {
+  id integer [primary key]
+  doctor_id integer [Ref: > doctors.id]
+  clinic_id integer [Ref: > clinics.id]
+}
+
+Table time_slots {
+  id integer [primary key]
+  doctor_clinic_id integer [Ref: > doctors_clinics.id]
+  start_time timestamp
+  end_time timestamp
+  is_available boolean
+}
+
+Table appointment_bills {
+  id integer [primary key]
+  appointment_id integer [Ref: - appointments.id]
+  amount decimal
+  bill_status_id integer [Ref: > bill_status.id]
+  payment_method_id integer [Ref: > payment_methods.id]
+  created_at timestamp
+}
+
+Table bill_status {
+  id integer [primary key]
+  name varchar
+}
+
+Table payment_methods {
+  id integer [primary key]
+  name varchar
+}
+
+Table appointment_notes {
+  id integer [primary key]
+  appointment_id integer [Ref: > appointments.id]
+  notes varchar
+  created_by integer [Ref: > doctors.id]
+  created_at timestamp
+}
+
+Table appointment_status {
+  id integer [primary key]
+  name varchar
+}

@@ -1,0 +1,161 @@
+Core Reference Tables:
+CREATE TABLE genders (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  gender VARCHAR(50) NOT NULL
+)
+
+CREATE TABLE appointment_status (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL
+)
+
+CREATE TABLE bill_status (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL
+)
+
+CREATE TABLE payment_methods (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL
+)
+
+CREATE TABLE specializations (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL
+)
+
+
+Users:
+CREATE TABLE admins (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  first_name VARCHAR(100) NOT NULL,
+  last_name VARCHAR(100) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+
+CREATE TABLE patients (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  first_name VARCHAR(100) NOT NULL,
+  last_name VARCHAR(100) NOT NULL,
+  gender_id INT,
+  date_of_birth DATE,
+  phone_number VARCHAR(20),
+  email VARCHAR(255) UNIQUE,
+  password VARCHAR(255),
+  address VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_patients_gender
+    FOREIGN KEY (gender_id) REFERENCES genders(id)
+)
+
+CREATE TABLE doctors (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  first_name VARCHAR(100) NOT NULL,
+  last_name VARCHAR(100) NOT NULL,
+  gender_id INT,
+  phone_number VARCHAR(20),
+  email VARCHAR(255) UNIQUE,
+  password VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_doctors_gender
+    FOREIGN KEY (gender_id) REFERENCES genders(id)
+)
+
+
+Clinics & Relationships:
+CREATE TABLE clinics (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(150) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  phone_number VARCHAR(20) NOT NULL,
+  address VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+
+CREATE TABLE doctors_specializations (
+  doctor_id INT NOT NULL,
+  specialization_id INT NOT NULL,
+  PRIMARY KEY (doctor_id, specialization_id),
+  CONSTRAINT fk_ds_doctor
+    FOREIGN KEY (doctor_id) REFERENCES doctors(id),
+  CONSTRAINT fk_ds_specialization
+    FOREIGN KEY (specialization_id) REFERENCES specializations(id)
+)
+
+CREATE TABLE doctors_clinics (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  doctor_id INT NOT NULL,
+  clinic_id INT NOT NULL,
+  CONSTRAINT fk_dc_doctor
+    FOREIGN KEY (doctor_id) REFERENCES doctors(id),
+  CONSTRAINT fk_dc_clinic
+    FOREIGN KEY (clinic_id) REFERENCES clinics(id),
+  UNIQUE KEY uq_doctor_clinic (doctor_id, clinic_id)
+)
+
+
+Time Slots & Appointments:
+CREATE TABLE time_slots (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  doctor_clinic_id INT NOT NULL,
+  start_time DATETIME NOT NULL,
+  end_time DATETIME NOT NULL,
+  is_available BOOLEAN DEFAULT TRUE,
+  CONSTRAINT fk_time_slots_doctor_clinic
+    FOREIGN KEY (doctor_clinic_id) REFERENCES doctors_clinics(id),
+  CHECK (start_time < end_time)
+)
+
+CREATE TABLE appointments (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  patient_id INT NOT NULL,
+  time_slot_id INT NOT NULL,
+  status_id INT NOT NULL,
+  reason TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_appointments_patient
+    FOREIGN KEY (patient_id) REFERENCES patients(id),
+  CONSTRAINT fk_appointments_time_slot
+    FOREIGN KEY (time_slot_id) REFERENCES time_slots(id),
+  CONSTRAINT fk_appointments_status
+    FOREIGN KEY (status_id) REFERENCES appointment_status(id)
+)
+
+
+Billing:
+CREATE TABLE appointment_bills (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  appointment_id INT NOT NULL UNIQUE,
+  amount DECIMAL(10,2) NOT NULL,
+  bill_status_id INT NOT NULL,
+  payment_method_id INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_bills_appointment
+    FOREIGN KEY (appointment_id) REFERENCES appointments(id),
+  CONSTRAINT fk_bills_status
+    FOREIGN KEY (bill_status_id) REFERENCES bill_status(id),
+  CONSTRAINT fk_bills_payment
+    FOREIGN KEY (payment_method_id) REFERENCES payment_methods(id)
+)
+
+
+Appointment Notes:
+CREATE TABLE appointment_notes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  appointment_id INT NOT NULL,
+  notes TEXT NOT NULL,
+  created_by INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_notes_appointment
+    FOREIGN KEY (appointment_id) REFERENCES appointments(id),
+  CONSTRAINT fk_notes_doctor
+    FOREIGN KEY (created_by) REFERENCES doctors(id)
+)
+
+
+
+
+
+
