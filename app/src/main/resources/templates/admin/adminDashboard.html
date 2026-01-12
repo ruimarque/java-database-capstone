@@ -1,3 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="icon" type="image/png" th:href="@{/assets/images/logo/logo.png}">
+
+    <link rel="stylesheet" th:href="@{/assets/css/adminDashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+
+    <script th:src="@{/js/render.js}" defer></script>
+    <script th:src="@{/js/util.js}" defer></script>
+    <script th:src="@{/js/components/header.js}" defer></script>
+    <script th:src="@{/js/components/footer.js}" defer></script>
+</head>
+<body>
+    <div class="container">
+        <div class="wrapper">
+            <div id="header"></div>
+            <main class="main-content">
+                <!-- Search Bar -->
+                <input type="text" id="searchBar" placeholder="Search Doctors by Name..." class="search-input" />
+
+                <!-- Filter Dropdowns -->
+                <div class="filters">
+                    <select id="timeFilter">
+                        <option value="">Filter by Time</option>
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                    </select>
+
+                    <select id="specialtyFilter">
+                        <option value="">Filter by Specialty</option>
+                        <option value="Cardiologist">Cardiologist</option>
+                        <option value="Dentist">Dentist</option>
+                        <option value="Dermatologist">Dermatologist</option>
+                        <option value="Neurologist">Neurologist</option>
+                        <option value="General">General</option>
+                    </select>
+                </div>
+                <div id="content"></div>
+            </main>
+            <div id="footer">
+
+            </div>
+        </div>
+    </div>
+    <!-- Modal Popup for Add Doctor -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="modal-content">
+            <span id="modal-close" class="modal-close">&times;</span>
+            <div id="modal-body">
+                <!-- Doctor Form injected dynamically -->
+            </div>
+        </div>
+    </div>
+    <script type="module" src="../js/services/adminDashboard.js" defer></script>
+    <script type="module" src="../js/components/doctorCard.js" defer></script>
+</body>
+</html>
+
 <!-- adminDashboard.html -->
 
 <!-- 
