@@ -44,8 +44,7 @@ export function openModal(type) {
         <input type="password" id="password" placeholder="Password" class="input-field">
         <button class="dashboard-btn" id="loginBtn">Login</button>
       `;
-  }
-  else if (type === "patientSignup") {
+  } else if (type === "patientSignup") {
     modalContent = `
       <h2>Patient Signup</h2>
       <input type="text" id="name" placeholder="Name" class="input-field">
