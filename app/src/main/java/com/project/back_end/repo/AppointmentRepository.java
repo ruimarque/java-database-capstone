@@ -17,13 +17,13 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     // does it need the @Query?
     @Query("SELECT a FROM Appointment a LEFT JOIN FETCH a.doctor d WHERE a.doctor.id = :doctorId " +
-            "AND a.appointment_time BETWEEN :start AND :end")
+            "AND a.appointmentTime BETWEEN :start AND :end")
     public List<Appointment> findByDoctorIdAndAppointmentTimeBetween(Long doctorId, LocalDateTime start,
         LocalDateTime end);
 
     //
     @Query("SELECT a FROM Appointment a LEFT JOIN FETCH a.patient p WHERE a.doctor.id = :doctorId " +
-            "AND LOWER(p.name) LIKE LOWER(CONCAT('%', :patientName, '%')) AND a.appointment_time BETWEEN " +
+            "AND LOWER(p.name) LIKE LOWER(CONCAT('%', :patientName, '%')) AND a.appointmentTime BETWEEN " +
             ":start AND :end")
     public List<Appointment> findByDoctorIdAndPatient_NameContainingIgnoreCaseAndAppointmentTimeBetween(
             Long doctorId, String patientName, LocalDateTime start, LocalDateTime end);
@@ -41,7 +41,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             "AND a.patient.id = :patientId")
     public List<Appointment> filterByDoctorNameAndPatientId(String doctorName, Long patientId);
 
-    @Query("SELECT a FROM Appointment a WHERE LOWER(d.name) LIKE LOWER(CONCAT('%', :doctorName, '%')) AND " +
+    @Query("SELECT a FROM Appointment a WHERE LOWER(a.doctor.name) LIKE LOWER(CONCAT('%', :doctorName, '%')) AND " +
             "a.patient.id = :patientId AND a.status = :status")
     public List<Appointment> filterByDoctorNameAndPatientIdAndStatus(String doctorName, Long patientId, int status);
 

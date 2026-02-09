@@ -12,10 +12,10 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 
     public Doctor findByEmail(String email);
 
-    @Query("SELECT d FROM Doctor d WHERE LOWER(d.name) LIKE LOWER(CONCAT('%' + :name + '%'))")
+    @Query("SELECT d FROM Doctor d WHERE LOWER(d.name) LIKE LOWER(CONCAT('%', :name, '%'))")
     public List<Doctor> findByNameLike(String name);
 
-    @Query("SELECT d FROM Doctor d WHERE LOWER(d.name) LIKE LOWER(CONCAT('%' + :name + '%')) " +
+    @Query("SELECT d FROM Doctor d WHERE LOWER(d.name) LIKE LOWER(CONCAT('%', :name, '%')) " +
             "AND LOWER(d.specialty) = LOWER(:specialty)")
     public List<Doctor> findByNameContainingIgnoreCaseAndSpecialtyIgnoreCase(String name, String specialty);
 
